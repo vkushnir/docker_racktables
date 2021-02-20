@@ -1,0 +1,8 @@
+version: "3.9"
+
+networks:
+  lan:
+    driver_opts:
+      com.docker.network.bridge.name: "stock"
+      com.docker.network.bridge.host_binding_ipv4: "172.17.10.30"
+      com.docker.network.bridge.enable_ip_masquerade: "true"

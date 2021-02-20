@@ -1,0 +1,68 @@
+version: "3.9"
+
+networks:
+  lan:
+
+services:
+
+  racktables:
+    build:
+      context: src/
+      args:
+        BUILD_FROM: "alpine:3.13" 
+        RACKTABLES_TAG: "RackTables-0.21.5"
+    image: "racktbles:0.21.5"
+    environment:
+      DBHOST: "mariadb"
+      DBNAME: "${DBNAME}"
+      DBUSER: "${DBUSER}"
+      DBPASS: "${DBPASS}"
+    volumes:
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "./php.ini:/etc/php7/php.ini"
+    networks:
+      lan:
+        aliases:
+          - "app"
+          - "racktables"
+          - "stock"
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  db:
+    image: "mariadb:10.5"
+    environment:
+      MYSQL_DATABASE: "${DBNAME}"
+      MYSQL_USER: "${DBUSER}"
+      MYSQL_PASSWORD: "${DBPASS}"
+      MYSQL_ROOT_PASSWORD: "${DBROOT}"
+    volumes:
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "./mariadb:/var/lib/mysql"
+    networks:
+      lan:
+        aliases:
+          - "mariadb"
+          - "database"
+          - "db"
+    restart: unless-stopped
+
+  ngix:
+    image: nginx:stable-alpine
+    volumes_from:
+      - racktables
+    volumes:
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+      - 80:80
+    networks:
+      lan:
+        aliases:
+          - "nginx"
+          - "www"
+    restart: unless-stopped
+    depends_on:
+      - racktables
+      - db
