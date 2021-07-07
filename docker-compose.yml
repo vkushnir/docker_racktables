@@ -11,14 +11,21 @@ services:
       args:
         BUILD_FROM: "alpine:3.13" 
         RACKTABLES_TAG: "RackTables-0.21.5"
-    image: "racktbles:0.21.5"
+    image: "racktbles:0.21.5.3"
     environment:
-      DBHOST: "mariadb"
-      DBNAME: "${DBNAME}"
-      DBUSER: "${DBUSER}"
-      DBPASS: "${DBPASS}"
+      DB_HOST: "mariadb"
+      DB_NAME: "${DB_NAME}"
+      DB_USER: "${DB_USER}"
+      DB_PASS: "${DB_PASS}"
+      USR_AUTH_SRC: "ldap"
+      LDAP_USER: "${LDAP_USER}"
+      LDAP_PASS: "${LDAP_PASSWORD}"
+      LDAP_HOSTS: "${LDAP_SERVERS}"
+      LDAP_DOMAIN: "${LDAP_DOMAIN}"
+      LDAP_SDN: "${LDAP_SEARCH_DN}"
+      LDAP_GFILTER: "${LDAP_GROUP_FILTER}"
     volumes:
-      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:ro"
       - "./php.ini:/etc/php7/php.ini"
     networks:
       lan:
@@ -33,12 +40,12 @@ services:
   db:
     image: "mariadb:10.5"
     environment:
-      MYSQL_DATABASE: "${DBNAME}"
-      MYSQL_USER: "${DBUSER}"
-      MYSQL_PASSWORD: "${DBPASS}"
-      MYSQL_ROOT_PASSWORD: "${DBROOT}"
+      MYSQL_DATABASE: "${DB_NAME}"
+      MYSQL_USER: "${DB_USER}"
+      MYSQL_PASSWORD: "${DB_PASS}"
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT}"
     volumes:
-      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:ro"
       - "./mariadb:/var/lib/mysql"
     networks:
       lan:
@@ -53,7 +60,7 @@ services:
     volumes_from:
       - racktables
     volumes:
-      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:r"
+      - "/usr/share/zoneinfo/Asia/Aqtau:/etc/localtime:ro"
       - "./nginx.conf:/etc/nginx/nginx.conf"
     ports:
       - 80:80

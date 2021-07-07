@@ -9,10 +9,18 @@ ARG RACKTABLES_TAG="RackTables-0.21.5"
 LABEL author="Paul Tötterman <paul.totterman@iki.fi>"
 LABEL author="Vladimir Kushnir <vkushnir@gmail.com>"
 
-ENV DBHOST="mariadb" \
-    DBNAME="racktables" \
-    DBUSER="racktables" \
-    DBPASS=""
+ENV DB_HOST="mariadb" \
+    DB_NAME="racktables" \
+    DB_USER="racktables" \
+    DB_PASS="" \
+    LDAP_USER="" \
+    LDAP_PASS="" \
+    LDAP_HOSTS="" \
+    LDAP_DOMAIN="" \
+    LDAP_SDN="" \
+    LDAP_GATTR="memberOf" \
+    LDAP_GFILTER="/^[Cc][Nn]=([^,]+)/" \
+    USR_AUTH_SRC="database"
 
 COPY entrypoint.sh /entrypoint.sh
 COPY ${RACKTABLES_TAG}.tar.gz racktables_contribs.tar.gz /
